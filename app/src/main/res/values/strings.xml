@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">MiloszKlim-FFT</string>
+    <string name="opisWykres">Wykres</string>
+    <string name="start">START</string>
+    <string name="stop">STOP</string>
+    <string name="maxY">max Y</string>
+    <string name="FS">samplingFrequency</string>
+    <string name="F">F</string>
+</resources>

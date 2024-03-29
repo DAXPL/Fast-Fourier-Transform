@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <ImageView
+        android:id="@+id/wykres"
+        android:layout_width="1024px"
+        android:layout_height="520px"
+        android:layout_marginTop="24dp"
+        android:contentDescription="@string/opisWykres"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:srcCompat="@tools:sample/backgrounds/scenic" />
+
+    <Button
+        android:id="@+id/ButtonStart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="48dp"
+        android:layout_marginEnd="300dp"
+        android:autoSizeTextType="uniform"
+        android:text="@string/start"
+        app:layout_constraintEnd_toEndOf="@+id/wykres"
+        app:layout_constraintStart_toStartOf="@+id/wykres"
+        app:layout_constraintTop_toBottomOf="@+id/wykres" />
+
+    <Button
+        android:id="@+id/ButtonStop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="300dp"
+        android:layout_marginTop="48dp"
+        android:layout_marginEnd="24dp"
+        android:autoSizeTextType="uniform"
+        android:text="@string/stop"
+        app:layout_constraintEnd_toEndOf="@+id/wykres"
+        app:layout_constraintStart_toStartOf="@+id/wykres"
+        app:layout_constraintTop_toBottomOf="@+id/wykres" />
+
+    <TextView
+        android:id="@+id/textMaxY"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="100dp"
+        android:text="@string/maxY"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/wykres" />
+
+    <com.google.android.material.slider.Slider
+        android:id="@+id/SliderFS"
+        android:layout_width="364dp"
+        android:layout_height="41dp"
+        android:contentDescription="@string/maxY"
+        android:valueFrom="0"
+        android:valueTo="10000"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewFS" />
+
+    <com.google.android.material.slider.Slider
+        android:id="@+id/SliderF"
+        android:layout_width="364dp"
+        android:layout_height="41dp"
+        android:layout_marginTop="15dp"
+        android:contentDescription="@string/maxY"
+        android:valueFrom="0"
+        android:valueTo="5000"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.468"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textF" />
+
+    <TextView
+        android:id="@+id/textViewFS"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="150dp"
+        android:text="@string/FS"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/wykres" />
+
+    <TextView
+        android:id="@+id/textF"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:text="@string/F"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/SliderFS" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
