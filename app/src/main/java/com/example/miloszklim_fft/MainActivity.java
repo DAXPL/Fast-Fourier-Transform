@@ -56,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
         readoutProcess = new Readout(this);
         readoutProcess.start();
 
+        DrawChart();
     }
 
     public void DrawChart()
@@ -65,8 +66,8 @@ public class MainActivity extends AppCompatActivity {
     }
     public void Refresh(int millis)
     {
-        Handler handler = new Handler();
-        Runnable runnable = new Runnable() {
+        final Handler handler = new Handler();
+        final Runnable runnable = new Runnable() {
             @Override
             public void run() {
                 DrawChart();

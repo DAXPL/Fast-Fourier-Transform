@@ -84,7 +84,7 @@ public class ChartDrawer
             canvas.drawLine(i,downy,i,upy,paint);
         }
 
-        //maxYtext.setText("Wartosc: " + main.ymax);
+        maxYtext.setText("Wartosc: " + main.ymax);
     }
 
 }
