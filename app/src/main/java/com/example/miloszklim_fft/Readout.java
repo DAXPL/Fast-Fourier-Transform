@@ -69,6 +69,19 @@ public class Readout extends Thread
             ComputeAmpl();
 
 
+            for (int i=0; i<main.readings.length-1;i++)
+            {
+                main.readings[i]=main.readings[i+1];
+            }
+            main.readings[main.readings.length-1] = main.ymax;
+
+            double avg = 0;
+            for (int i=0; i<main.readings.length;i++)
+            {
+                avg+=main.readings[i];
+            }
+            main.temperature = ((avg/main.window)*main.multiplier);
+
             /*---SLEEP---*/
             try
             {
@@ -85,7 +98,8 @@ public class Readout extends Thread
     public void ComputeAmpl()
     {
         myFFT.fft(x, y);
-        main.ymax = 0;
+        Log.d("Readout","X "+ x[0]);
+        main.ymax = 0.001;
         for (int i = 0; i < blocksize / 2; i++) {
             ampl[i] = x[i] * x[i] + y[i] * y[i];
             if (ampl[i] > main.ymax) main.ymax = ampl[i];
@@ -93,5 +107,6 @@ public class Readout extends Thread
         for (int i = 0; i < blocksize / 2; i++) {
             ampl[i] = ampl[i] * 500 / main.ymax;
         }
+        Log.d("Readout","reading "+ ampl[0]);
     }
 }

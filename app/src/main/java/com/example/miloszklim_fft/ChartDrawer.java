@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -19,17 +20,21 @@ public class ChartDrawer
     Paint paint;
     /*---UI---*/
     TextView maxYtext;
+    TextView tempOutputFinal;
     TextView fsText;
     TextView fText;
+    EditText multiplierInput;
 
     MainActivity main;
     public ChartDrawer(MainActivity _main)
     {
         main = _main;
 
-        maxYtext = main.findViewById(R.id.textMaxY);
+        maxYtext = main.findViewById(R.id.tempOutput);
+        tempOutputFinal = main.findViewById(R.id.tempOutputFinal);
         fsText = main.findViewById(R.id.textViewFS);
         fText = main.findViewById(R.id.textF);
+        multiplierInput = main.findViewById(R.id.multipilerInput);
 
         iv = main.findViewById(R.id.wykres);
         bitmap = Bitmap.createBitmap(main.blocksize / 2, 520, Bitmap.Config.ARGB_8888);
@@ -45,7 +50,6 @@ public class ChartDrawer
 
         buttonStart.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                //main.ComputeAmpl();
                 DrawChart();
             }
         });
@@ -71,6 +75,14 @@ public class ChartDrawer
                 fText.setText("F: " + main.f);
             }
         });
+
+        multiplierInput.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(!hasFocus) main.multiplier = Double.parseDouble(multiplierInput.getText().toString());
+            }
+        });
+
     }
 
     public void DrawChart()
@@ -85,6 +97,7 @@ public class ChartDrawer
         }
 
         maxYtext.setText("Wartosc: " + main.ymax);
+        tempOutputFinal.setText(main.temperature+" C");;
     }
 
 }

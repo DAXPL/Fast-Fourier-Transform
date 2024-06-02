@@ -39,6 +39,10 @@ public class MainActivity extends AppCompatActivity {
     double[] ampl;
     double ymax = 0;
 
+    int window = 5;
+    double[] readings = new double[window];
+    double temperature = 0;
+    double multiplier = 0;
     Readout readoutProcess;
     ChartDrawer drawer;
 

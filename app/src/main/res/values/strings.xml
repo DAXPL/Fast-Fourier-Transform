@@ -6,4 +6,5 @@
     <string name="maxY">max Y</string>
     <string name="FS">samplingFrequency</string>
     <string name="F">F</string>
+    <string name="Multipiler">Podaj mnoznik</string>
 </resources>
