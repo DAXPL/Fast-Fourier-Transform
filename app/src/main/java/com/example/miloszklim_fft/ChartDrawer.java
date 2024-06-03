@@ -18,23 +18,24 @@ public class ChartDrawer
     Bitmap bitmap;
     Canvas canvas;
     Paint paint;
+
     /*---UI---*/
-    TextView maxYtext;
     TextView tempOutputFinal;
     TextView fsText;
     TextView fText;
-    EditText multiplierInput;
+    EditText aInput;
+    EditText bInput;
 
     MainActivity main;
     public ChartDrawer(MainActivity _main)
     {
         main = _main;
 
-        maxYtext = main.findViewById(R.id.tempOutput);
         tempOutputFinal = main.findViewById(R.id.tempOutputFinal);
         fsText = main.findViewById(R.id.textViewFS);
         fText = main.findViewById(R.id.textF);
-        multiplierInput = main.findViewById(R.id.multipilerInput);
+        aInput = main.findViewById(R.id.aInput);
+        bInput = main.findViewById(R.id.bInput);
 
         iv = main.findViewById(R.id.wykres);
         bitmap = Bitmap.createBitmap(main.blocksize / 2, 520, Bitmap.Config.ARGB_8888);
@@ -50,13 +51,32 @@ public class ChartDrawer
 
         buttonStart.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                DrawChart();
+                try
+                {
+                    main.a = Double.parseDouble(aInput.getText().toString());
+                }
+                catch(Exception e)
+                {
+                    main.a = 1;
+                }
+
+                try
+                {
+                    main.b = Double.parseDouble(bInput.getText().toString());
+                }
+                catch(Exception e)
+                {
+                    main.b = 0;
+                }
+
+                main.isRunning = true;
             }
         });
 
         buttonStop.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 canvas.drawColor(Color.BLACK);
+                main.isRunning = false;
             }
         });
 
@@ -76,18 +96,12 @@ public class ChartDrawer
             }
         });
 
-        multiplierInput.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if(!hasFocus) main.multiplier = Double.parseDouble(multiplierInput.getText().toString());
-            }
-        });
-
     }
 
     public void DrawChart()
     {
         canvas.drawColor(Color.BLACK);
+        if(!main.isRunning) return;
         paint.setColor(Color.GREEN);
         for(int i=0; i<main.ampl.length;i++)
         {
@@ -96,7 +110,6 @@ public class ChartDrawer
             canvas.drawLine(i,downy,i,upy,paint);
         }
 
-        maxYtext.setText("Wartosc: " + main.ymax);
         tempOutputFinal.setText(main.temperature+" C");;
     }
 

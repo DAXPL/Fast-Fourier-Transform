@@ -23,7 +23,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="48dp"
+        android:layout_marginTop="20dp"
         android:layout_marginEnd="300dp"
         android:autoSizeTextType="uniform"
         android:text="@string/start"
@@ -36,22 +36,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="300dp"
-        android:layout_marginTop="48dp"
+        android:layout_marginTop="20dp"
         android:layout_marginEnd="24dp"
         android:autoSizeTextType="uniform"
         android:text="@string/stop"
         app:layout_constraintEnd_toEndOf="@+id/wykres"
         app:layout_constraintStart_toStartOf="@+id/wykres"
-        app:layout_constraintTop_toBottomOf="@+id/wykres" />
-
-    <TextView
-        android:id="@+id/tempOutput"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="75dp"
-        android:text="@string/maxY"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/wykres" />
 
     <TextView
@@ -98,7 +88,7 @@
         android:text="@string/FS"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/multipilerInput" />
+        app:layout_constraintTop_toBottomOf="@+id/aInput" />
 
     <TextView
         android:id="@+id/textF"
@@ -111,15 +101,29 @@
         app:layout_constraintTop_toBottomOf="@+id/SliderFS" />
 
     <EditText
-        android:id="@+id/multipilerInput"
-        android:contentDescription="@+id/Multipiler"
-        android:layout_width="164dp"
+        android:id="@+id/aInput"
+        android:layout_width="100dp"
         android:layout_height="48dp"
-        android:layout_marginTop="25dp"
+        android:layout_marginTop="15dp"
+        android:contentDescription="@+id/Multipiler"
         android:ems="10"
-        android:inputType="numberDecimal"
+        android:inputType="numberDecimal|numberSigned"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.044"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tempOutput" />
+        app:layout_constraintTop_toBottomOf="@+id/ButtonStart" />
+
+    <EditText
+        android:id="@+id/bInput"
+        android:layout_width="100dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="15dp"
+        android:contentDescription="@+id/Multipiler"
+        android:ems="10"
+        android:inputType="numberDecimal|numberSigned"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.948"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ButtonStop" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

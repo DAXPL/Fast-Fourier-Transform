@@ -42,9 +42,12 @@ public class MainActivity extends AppCompatActivity {
     int window = 5;
     double[] readings = new double[window];
     double temperature = 0;
-    double multiplier = 0;
+    double a = 1;
+    double b = 0;
     Readout readoutProcess;
     ChartDrawer drawer;
+
+    boolean isRunning = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
         drawer.DrawChart();
         Refresh(1000);
     }
+
     public void Refresh(int millis)
     {
         final Handler handler = new Handler();
