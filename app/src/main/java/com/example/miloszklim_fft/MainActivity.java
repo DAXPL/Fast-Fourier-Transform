@@ -39,14 +39,13 @@ public class MainActivity extends AppCompatActivity {
     double[] ampl;
     double ymax = 0;
 
-    int window = 5;
+    int window = 50;
     double[] readings = new double[window];
     double temperature = 0;
     double a = 1;
     double b = 0;
     Readout readoutProcess;
     ChartDrawer drawer;
-
     boolean isRunning = false;
 
     @Override
@@ -69,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
     public void DrawChart()
     {
         drawer.DrawChart();
-        Refresh(1000);
+        Refresh(500);
     }
 
     public void Refresh(int millis)

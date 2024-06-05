@@ -7,4 +7,5 @@
     <string name="FS">samplingFrequency</string>
     <string name="F">F</string>
     <string name="Multipiler">Podaj mnoznik</string>
+    <string name="Author">Milosz Klim, UAM TK, 2024</string>
 </resources>

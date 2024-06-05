@@ -63,6 +63,7 @@ public class Readout extends Thread
             {
                 /*---READING---*/
                 int bufferReadResult = audioRecord.read(audioBuffer, 0, blocksize);
+                Log.d("Audio",audioRecord.getActiveRecordingConfiguration().toString());
 
                 for (int i = 0; i < blocksize && i < bufferReadResult; i++)
                 {
@@ -71,26 +72,13 @@ public class Readout extends Thread
 
                 /*---COMPUTING---*/
                 ComputeAmpl();
-
-                /*---AVG---*/
-                for (int i=0; i<main.readings.length-1;i++)
-                {
-                    main.readings[i]=main.readings[i+1];
-                }
-                main.readings[main.readings.length-1] = main.ymax;
-
-                double avg = 0;
-                for (int i=0; i<main.readings.length;i++)
-                {
-                    avg+=main.readings[i];
-                }
-                main.temperature = (((avg/main.window)*main.a)+main.b);
+                main.temperature = (((ComputeAVG())*main.a)+main.b);
             }
 
             /*---SLEEP---*/
             try
             {
-                Thread.sleep(100);
+                Thread.sleep(200);//5 times per second
             } catch (Exception e)
             {
                 e.printStackTrace();
@@ -101,7 +89,7 @@ public class Readout extends Thread
         audioRecord.stop();
     }
 
-    public void ComputeAmpl()
+    private void ComputeAmpl()
     {
         myFFT.fft(x, y);
 
@@ -126,5 +114,19 @@ public class Readout extends Thread
         }
     }
 
+    private double ComputeAVG(){
+        for (int i=0; i<main.readings.length-1;i++)
+        {
+            main.readings[i]=main.readings[i+1];
+        }
+        main.readings[main.readings.length-1] = main.ymax;
 
+        double avg = 0;
+        for (int i=0; i<main.readings.length;i++)
+        {
+            avg+=main.readings[i];
+        }
+
+        return (avg/main.readings.length);
+    }
 }

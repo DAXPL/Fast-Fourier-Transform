@@ -26,6 +26,10 @@ public class ChartDrawer
     EditText aInput;
     EditText bInput;
 
+
+    TextView chartMin;
+    TextView chartMax;
+    TextView audioDebug;
     MainActivity main;
     public ChartDrawer(MainActivity _main)
     {
@@ -36,6 +40,8 @@ public class ChartDrawer
         fText = main.findViewById(R.id.textF);
         aInput = main.findViewById(R.id.aInput);
         bInput = main.findViewById(R.id.bInput);
+        chartMin = main.findViewById(R.id.chartMin);
+        chartMax = main.findViewById(R.id.chartMax);
 
         iv = main.findViewById(R.id.wykres);
         bitmap = Bitmap.createBitmap(main.blocksize / 2, 520, Bitmap.Config.ARGB_8888);
@@ -102,15 +108,32 @@ public class ChartDrawer
     {
         canvas.drawColor(Color.BLACK);
         if(!main.isRunning) return;
+
         paint.setColor(Color.GREEN);
         for(int i=0; i<main.ampl.length;i++)
         {
             int downy = 510;
             int upy = 510 - (int) main.ampl[i];
+
             canvas.drawLine(i,downy,i,upy,paint);
         }
 
-        tempOutputFinal.setText(main.temperature+" C");;
+        paint.setColor(Color.RED);
+        for(int i=0; i<main.ampl.length;i++){
+            if(i%10 == 0)
+            {
+                canvas.drawLine(i,510,i,500,paint);
+            }
+            if(i%100 == 0)
+            {
+                canvas.drawLine(i,510,i,475,paint);
+            }
+        }
+
+        chartMin.setText("0");
+        chartMax.setText(main.ampl.length+"");
+
+        tempOutputFinal.setText(String.format("%.2f",main.temperature)+" C");
     }
 
 }
