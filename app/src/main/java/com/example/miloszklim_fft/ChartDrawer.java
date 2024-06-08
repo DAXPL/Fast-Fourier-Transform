@@ -26,7 +26,6 @@ public class ChartDrawer
     EditText aInput;
     EditText bInput;
 
-
     TextView chartMin;
     TextView chartMax;
     TextView audioDebug;
@@ -51,38 +50,46 @@ public class ChartDrawer
         canvas.drawColor(Color.RED);
 
         Button buttonStart = main.findViewById(R.id.ButtonStart);
-        Button buttonStop = main.findViewById(R.id.ButtonStop);
         Slider FSslider = main.findViewById(R.id.SliderFS);
         Slider Fslider = main.findViewById(R.id.SliderF);
 
-        buttonStart.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                try
+        buttonStart.setOnClickListener(new View.OnClickListener()
+        {
+            public void onClick(View v)
+            {
+                if(main.isRunning == false)
                 {
-                    main.a = Double.parseDouble(aInput.getText().toString());
+                    try
+                    {
+                        main.a = Double.parseDouble(aInput.getText().toString());
+                    }
+                    catch(Exception e)
+                    {
+                        main.a = 1;
+                    }
+
+                    try
+                    {
+                        main.b = Double.parseDouble(bInput.getText().toString());
+                    }
+                    catch(Exception e)
+                    {
+                        main.b = 0;
+                    }
+                    buttonStart.setText("Stop");
+
+                    main.readoutProcess = new Readout(main);
+                    main.readoutProcess.start();
+
                 }
-                catch(Exception e)
+                else
                 {
-                    main.a = 1;
+                    main.readoutProcess.shouldRun = false;
+                    canvas.drawColor(Color.BLACK);
+                    buttonStart.setText("Start");
                 }
 
-                try
-                {
-                    main.b = Double.parseDouble(bInput.getText().toString());
-                }
-                catch(Exception e)
-                {
-                    main.b = 0;
-                }
-
-                main.isRunning = true;
-            }
-        });
-
-        buttonStop.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                canvas.drawColor(Color.BLACK);
-                main.isRunning = false;
+                main.isRunning = !main.isRunning;
             }
         });
 

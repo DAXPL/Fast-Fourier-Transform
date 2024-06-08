@@ -22,26 +22,11 @@
         android:id="@+id/ButtonStart"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="300dp"
+        android:layout_marginTop="25dp"
         android:autoSizeTextType="uniform"
         android:text="@string/start"
-        app:layout_constraintEnd_toEndOf="@+id/wykres"
-        app:layout_constraintStart_toStartOf="@+id/wykres"
-        app:layout_constraintTop_toBottomOf="@+id/wykres" />
-
-    <Button
-        android:id="@+id/ButtonStop"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="300dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="24dp"
-        android:autoSizeTextType="uniform"
-        android:text="@string/stop"
-        app:layout_constraintEnd_toEndOf="@+id/wykres"
-        app:layout_constraintStart_toStartOf="@+id/wykres"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/wykres" />
 
     <TextView
@@ -50,7 +35,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="50dp"
         android:text="@string/maxY"
-        android:textSize="34sp"
+        android:textAlignment="center"
+        android:textSize="48sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
@@ -71,7 +57,6 @@
         android:id="@+id/SliderF"
         android:layout_width="364dp"
         android:layout_height="41dp"
-        android:layout_marginTop="15dp"
         android:contentDescription="@string/maxY"
         android:valueFrom="0"
         android:valueTo="5000"
@@ -84,11 +69,11 @@
         android:id="@+id/textViewFS"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="25dp"
+        android:layout_marginTop="75dp"
         android:text="@string/FS"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/aInput" />
+        app:layout_constraintTop_toBottomOf="@+id/ButtonStart" />
 
     <TextView
         android:id="@+id/textF"
@@ -104,7 +89,6 @@
         android:id="@+id/aInput"
         android:layout_width="100dp"
         android:layout_height="48dp"
-        android:layout_marginTop="15dp"
         android:contentDescription="@+id/Multipiler"
         android:ems="10"
         android:inputType="numberDecimal|numberSigned"
@@ -117,14 +101,13 @@
         android:id="@+id/bInput"
         android:layout_width="100dp"
         android:layout_height="48dp"
-        android:layout_marginTop="15dp"
         android:contentDescription="@+id/Multipiler"
         android:ems="10"
         android:inputType="numberDecimal|numberSigned"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.948"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ButtonStop" />
+        app:layout_constraintTop_toBottomOf="@+id/ButtonStart" />
 
     <TextView
         android:id="@+id/textView"
@@ -134,6 +117,7 @@
         android:layout_marginBottom="15dp"
         android:text="@string/Author"
         android:textSize="8sp"
+        android:textStyle="italic"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -141,7 +125,7 @@
         android:id="@+id/chartMin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="TextView"
+        android:text="0"
         app:layout_constraintStart_toStartOf="@+id/wykres"
         app:layout_constraintTop_toBottomOf="@+id/wykres" />
 
@@ -149,19 +133,26 @@
         android:id="@+id/chartMax"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="TextView"
+        android:text="1024"
         app:layout_constraintEnd_toEndOf="@+id/wykres"
         app:layout_constraintTop_toBottomOf="@+id/wykres" />
 
     <TextView
-        android:id="@+id/currentAudio"
+        android:id="@+id/aLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginBottom="10dp"
-        android:text="Current audio device"
-        android:textSize="8sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        android:text="a"
+        app:layout_constraintEnd_toEndOf="@+id/aInput"
+        app:layout_constraintStart_toStartOf="@+id/aInput"
+        app:layout_constraintTop_toBottomOf="@+id/aInput" />
+
+    <TextView
+        android:id="@+id/bLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="b"
+        app:layout_constraintEnd_toEndOf="@+id/bInput"
+        app:layout_constraintStart_toStartOf="@+id/bInput"
+        app:layout_constraintTop_toBottomOf="@+id/bInput" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

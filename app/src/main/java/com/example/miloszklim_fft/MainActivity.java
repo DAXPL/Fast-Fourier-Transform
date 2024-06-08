@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
     double temperature = 0;
     double a = 1;
     double b = 0;
-    Readout readoutProcess;
+    public Readout readoutProcess;
     ChartDrawer drawer;
     boolean isRunning = false;
 
@@ -58,10 +58,6 @@ public class MainActivity extends AppCompatActivity {
         ampl = new double[blocksize / 2];
 
         drawer = new ChartDrawer(this);
-
-        readoutProcess = new Readout(this);
-        readoutProcess.start();
-
         DrawChart();
     }
 

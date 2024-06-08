@@ -24,6 +24,8 @@ public class Readout extends Thread
     double[] ampl;
     FFT myFFT;
 
+    boolean shouldRun = true;
+
     MainActivity main;
     public Readout(MainActivity _main)
     {
@@ -57,23 +59,20 @@ public class Readout extends Thread
         AudioRecord audioRecord = new AudioRecord(MediaRecorder.AudioSource.MIC, samplingFrequency,channelConfiguration, audioEncoding, bufferSize);
         audioRecord.startRecording();
 
-        while (true)
+        while (shouldRun)
         {
-            if(main.isRunning)
+            /*---READING---*/
+            int bufferReadResult = audioRecord.read(audioBuffer, 0, blocksize);
+            Log.d("Audio",audioRecord.getActiveRecordingConfiguration().toString());
+
+            for (int i = 0; i < blocksize && i < bufferReadResult; i++)
             {
-                /*---READING---*/
-                int bufferReadResult = audioRecord.read(audioBuffer, 0, blocksize);
-                Log.d("Audio",audioRecord.getActiveRecordingConfiguration().toString());
-
-                for (int i = 0; i < blocksize && i < bufferReadResult; i++)
-                {
-                    x[i] = (double) audioBuffer[i] / 32768.0; // signed 16 bit
-                }
-
-                /*---COMPUTING---*/
-                ComputeAmpl();
-                main.temperature = (((ComputeAVG())*main.a)+main.b);
+                x[i] = (double) audioBuffer[i] / 32768.0; // signed 16 bit
             }
+
+            /*---COMPUTING---*/
+            ComputeAmpl();
+            main.temperature = (((ComputeAVG())*main.a)+main.b);
 
             /*---SLEEP---*/
             try
