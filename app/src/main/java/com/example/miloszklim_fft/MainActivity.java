@@ -1,51 +1,42 @@
 package com.example.miloszklim_fft;
 
-import android.content.pm.PackageManager;
 import android.os.Bundle;
-
-import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
-
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.os.Handler;
-import android.os.Looper;
-import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.TextView;
-
+import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.slider.RangeSlider;
 import com.google.android.material.slider.Slider;
 
+// Importy związane z nagrywaniem dźwięku
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
 
 public class MainActivity extends AppCompatActivity {
 
-    int samplingFrequency = 6000;//FS
-    int f = 2800;//F
+    // Częstotliwość próbkowania (Hz)
+    int samplingFrequency = 6000;
+    // Częstotliwość sygnału (Hz)
+    int f = 2800;
+    // Rozmiar bloku
     int blocksize = 2048;
+
+    // Tablice do przechowywania danych
     double[] x;
     double[] y;
     double[] ampl;
     double ymax = 0;
 
+    // Parametry związane z odczytem temperatury
     int window = 50;
     double[] readings = new double[window];
     double temperature = 0;
     double a = 1;
     double b = 0;
     public Readout readoutProcess;
+
+    // Obiekt do rysowania wykresu
     ChartDrawer drawer;
+    // Flaga oznaczająca stan działania programu
     boolean isRunning = false;
 
     @Override
@@ -53,22 +44,32 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Inicjalizacja tablic
         x = new double[blocksize];
         y = new double[blocksize];
         ampl = new double[blocksize / 2];
 
+        // Inicjalizacja obiektu rysującego wykres
         drawer = new ChartDrawer(this);
+
+        // Rysowanie wykresu
         DrawChart();
     }
 
-    public void DrawChart()
-    {
+    /**
+     * Metoda rysująca wykres.
+     */
+    public void DrawChart() {
         drawer.DrawChart();
-        Refresh(500);
+        Refresh(500); // Odświeżanie wykresu co 500 ms
     }
 
-    public void Refresh(int millis)
-    {
+    /**
+     * Metoda odświeżająca wykres po określonym czasie.
+     *
+     * @param millis czas w milisekundach
+     */
+    public void Refresh(int millis) {
         final Handler handler = new Handler();
         final Runnable runnable = new Runnable() {
             @Override

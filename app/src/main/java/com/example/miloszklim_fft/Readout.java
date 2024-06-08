@@ -8,16 +8,17 @@ import android.util.Log;
 
 import androidx.core.app.ActivityCompat;
 
-public class Readout extends Thread
-{
+public class Readout extends Thread {
 
-    int channelConfiguration = AudioFormat.CHANNEL_IN_MONO; //CHANNEL_CONFIGURATION_MONO
+    // Konfiguracja kanału audio i format
+    int channelConfiguration = AudioFormat.CHANNEL_IN_MONO;
     int audioEncoding = AudioFormat.ENCODING_PCM_16BIT;
 
+    // Rozmiar bloku i częstotliwość próbkowania
     int blocksize = 2048;
-    int samplingFrequency = 6000;//FS
+    int samplingFrequency = 6000; // FS
 
-    /*---Pointers---*/
+    // Wskaźniki do głównych komponentów
     android.app.Activity activity;
     double[] x;
     double[] y;
@@ -27,8 +28,8 @@ public class Readout extends Thread
     boolean shouldRun = true;
 
     MainActivity main;
-    public Readout(MainActivity _main)
-    {
+
+    public Readout(MainActivity _main) {
         main = _main;
         blocksize = _main.blocksize;
         samplingFrequency = _main.samplingFrequency;
@@ -40,46 +41,42 @@ public class Readout extends Thread
         myFFT = new FFT(blocksize);
     }
 
-    public void run()
-    {
-        Log.d("Readout","Readout thread " + Thread.currentThread().getId()+ " is running");
-        for (int i = 0; i < blocksize; i++)
-        {
+    @Override
+    public void run() {
+        Log.d("Readout", "Readout thread " + Thread.currentThread().getId() + " is running");
+        for (int i = 0; i < blocksize; i++) {
             y[i] = 0;
         }
         short[] audioBuffer = new short[blocksize];
 
         int bufferSize = AudioRecord.getMinBufferSize(samplingFrequency, channelConfiguration, audioEncoding);
 
-        if (ActivityCompat.checkSelfPermission(activity, android.Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED)
-        {
-            ActivityCompat.requestPermissions(activity, new String[]{android.Manifest.permission.RECORD_AUDIO},0);
+        // Sprawdzanie uprawnień do nagrywania audio
+        if (ActivityCompat.checkSelfPermission(activity, android.Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(activity, new String[]{android.Manifest.permission.RECORD_AUDIO}, 0);
             return;
         }
-        AudioRecord audioRecord = new AudioRecord(MediaRecorder.AudioSource.MIC, samplingFrequency,channelConfiguration, audioEncoding, bufferSize);
+
+        AudioRecord audioRecord = new AudioRecord(MediaRecorder.AudioSource.MIC, samplingFrequency, channelConfiguration, audioEncoding, bufferSize);
         audioRecord.startRecording();
 
-        while (shouldRun)
-        {
-            /*---READING---*/
+        while (shouldRun) {
+            // Odczytywanie danych audio
             int bufferReadResult = audioRecord.read(audioBuffer, 0, blocksize);
-            Log.d("Audio",audioRecord.getActiveRecordingConfiguration().toString());
+            Log.d("Audio", audioRecord.getActiveRecordingConfiguration().toString());
 
-            for (int i = 0; i < blocksize && i < bufferReadResult; i++)
-            {
-                x[i] = (double) audioBuffer[i] / 32768.0; // signed 16 bit
+            for (int i = 0; i < blocksize && i < bufferReadResult; i++) {
+                x[i] = (double) audioBuffer[i] / 32768.0; // konwersja 16-bitowych danych na double
             }
 
-            /*---COMPUTING---*/
+            // Obliczenia
             ComputeAmpl();
-            main.temperature = (((ComputeAVG())*main.a)+main.b);
+            main.temperature = ((ComputeAVG() * main.a) + main.b);
 
-            /*---SLEEP---*/
-            try
-            {
-                Thread.sleep(200);//5 times per second
-            } catch (Exception e)
-            {
+            // Uśpienie wątku
+            try {
+                Thread.sleep(200); // 5 razy na sekundę
+            } catch (Exception e) {
                 e.printStackTrace();
                 break;
             }
@@ -88,44 +85,46 @@ public class Readout extends Thread
         audioRecord.stop();
     }
 
-    private void ComputeAmpl()
-    {
+    /**
+     * Obliczanie amplitudy sygnału.
+     */
+    private void ComputeAmpl() {
         myFFT.fft(x, y);
 
         main.ymax = 0;
         double maxValue = Double.MIN_VALUE;
 
-        for (int i = 0; i < blocksize / 2; i++)
-        {
+        for (int i = 0; i < blocksize / 2; i++) {
             ampl[i] = x[i] * x[i] + y[i] * y[i];
 
-            if (ampl[i] > maxValue)
-            {
+            if (ampl[i] > maxValue) {
                 maxValue = ampl[i];
                 main.ymax = i;
             }
-
         }
-        Log.d("temp",main.ymax+" "+maxValue);
-        for (int i = 0; i < blocksize / 2; i++)
-        {
+        Log.d("temp", main.ymax + " " + maxValue);
+
+        for (int i = 0; i < blocksize / 2; i++) {
             ampl[i] = (ampl[i] * 500) / maxValue;
         }
     }
 
-    private double ComputeAVG(){
-        for (int i=0; i<main.readings.length-1;i++)
-        {
-            main.readings[i]=main.readings[i+1];
+    /**
+     * Obliczanie średniej amplitudy z odczytów.
+     *
+     * @return Średnia amplituda.
+     */
+    private double ComputeAVG() {
+        for (int i = 0; i < main.readings.length - 1; i++) {
+            main.readings[i] = main.readings[i + 1];
         }
-        main.readings[main.readings.length-1] = main.ymax;
+        main.readings[main.readings.length - 1] = main.ymax;
 
         double avg = 0;
-        for (int i=0; i<main.readings.length;i++)
-        {
-            avg+=main.readings[i];
+        for (int i = 0; i < main.readings.length; i++) {
+            avg += main.readings[i];
         }
 
-        return (avg/main.readings.length);
+        return (avg / main.readings.length);
     }
 }

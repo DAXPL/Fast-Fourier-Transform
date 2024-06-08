@@ -12,14 +12,14 @@ import android.widget.TextView;
 
 import com.google.android.material.slider.Slider;
 
-public class ChartDrawer
-{
+public class ChartDrawer {
+    // Elementy interfejsu użytkownika
     ImageView iv;
     Bitmap bitmap;
     Canvas canvas;
     Paint paint;
 
-    /*---UI---*/
+    // Elementy interfejsu użytkownika
     TextView tempOutputFinal;
     TextView fsText;
     TextView fText;
@@ -29,11 +29,13 @@ public class ChartDrawer
     TextView chartMin;
     TextView chartMax;
     TextView audioDebug;
+
     MainActivity main;
-    public ChartDrawer(MainActivity _main)
-    {
+
+    public ChartDrawer(MainActivity _main) {
         main = _main;
 
+        // Znajdź elementy interfejsu w układzie
         tempOutputFinal = main.findViewById(R.id.tempOutputFinal);
         fsText = main.findViewById(R.id.textViewFS);
         fText = main.findViewById(R.id.textF);
@@ -53,43 +55,10 @@ public class ChartDrawer
         Slider FSslider = main.findViewById(R.id.SliderFS);
         Slider Fslider = main.findViewById(R.id.SliderF);
 
-        buttonStart.setOnClickListener(new View.OnClickListener()
-        {
-            public void onClick(View v)
-            {
-                if(main.isRunning == false)
-                {
-                    try
-                    {
-                        main.a = Double.parseDouble(aInput.getText().toString());
-                    }
-                    catch(Exception e)
-                    {
-                        main.a = 1;
-                    }
-
-                    try
-                    {
-                        main.b = Double.parseDouble(bInput.getText().toString());
-                    }
-                    catch(Exception e)
-                    {
-                        main.b = 0;
-                    }
-                    buttonStart.setText("Stop");
-
-                    main.readoutProcess = new Readout(main);
-                    main.readoutProcess.start();
-
-                }
-                else
-                {
-                    main.readoutProcess.shouldRun = false;
-                    canvas.drawColor(Color.BLACK);
-                    buttonStart.setText("Start");
-                }
-
-                main.isRunning = !main.isRunning;
+        // Ustawienie listenerów dla elementów interfejsu
+        buttonStart.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                handleStartButtonClick(buttonStart);
             }
         });
 
@@ -108,39 +77,71 @@ public class ChartDrawer
                 fText.setText("F: " + main.f);
             }
         });
-
     }
 
-    public void DrawChart()
-    {
-        canvas.drawColor(Color.BLACK);
-        if(!main.isRunning) return;
+    /**
+     * Obsługa kliknięcia przycisku start.
+     *
+     * @param buttonStart Przycisk start.
+     */
+    private void handleStartButtonClick(Button buttonStart) {
+        if (!main.isRunning) {
+            try {
+                main.a = Double.parseDouble(aInput.getText().toString());
+            } catch (Exception e) {
+                main.a = 1;
+            }
 
+            try {
+                main.b = Double.parseDouble(bInput.getText().toString());
+            } catch (Exception e) {
+                main.b = 0;
+            }
+            buttonStart.setText("Stop");
+
+            main.readoutProcess = new Readout(main);
+            main.readoutProcess.start();
+        } else {
+            main.readoutProcess.shouldRun = false;
+            canvas.drawColor(Color.BLACK);
+            buttonStart.setText("Start");
+        }
+
+        main.isRunning = !main.isRunning;
+    }
+
+    /**
+     * Rysowanie wykresu na płótnie.
+     */
+    public void DrawChart() {
+        canvas.drawColor(Color.BLACK);
+        if (!main.isRunning) return;
+
+        // Rysowanie danych amplitudy na zielono
         paint.setColor(Color.GREEN);
-        for(int i=0; i<main.ampl.length;i++)
-        {
+        for (int i = 0; i < main.ampl.length; i++) {
             int downy = 510;
             int upy = 510 - (int) main.ampl[i];
 
-            canvas.drawLine(i,downy,i,upy,paint);
+            canvas.drawLine(i, downy, i, upy, paint);
         }
 
+        // Rysowanie linii siatki na czerwono
         paint.setColor(Color.RED);
-        for(int i=0; i<main.ampl.length;i++){
-            if(i%10 == 0)
-            {
-                canvas.drawLine(i,510,i,500,paint);
+        for (int i = 0; i < main.ampl.length; i++) {
+            if (i % 10 == 0) {
+                canvas.drawLine(i, 510, i, 500, paint);
             }
-            if(i%100 == 0)
-            {
-                canvas.drawLine(i,510,i,475,paint);
+            if (i % 100 == 0) {
+                canvas.drawLine(i, 510, i, 475, paint);
             }
         }
 
+        // Aktualizacja etykiet wykresu
         chartMin.setText("0");
-        chartMax.setText(main.ampl.length+"");
+        chartMax.setText(String.valueOf(main.ampl.length));
 
-        tempOutputFinal.setText(String.format("%.2f",main.temperature)+" C");
+        // Aktualizacja wyświetlania temperatury
+        tempOutputFinal.setText(String.format("%.2f", main.temperature) + " C");
     }
-
 }
