@@ -24,10 +24,10 @@ public class MainActivity extends AppCompatActivity {
     double[] x;
     double[] y;
     double[] ampl;
-    double ymax = 0;
+    //double ymax = 0;
 
     // Parametry związane z odczytem temperatury
-    int window = 50;
+    int window = 25;
     double[] readings = new double[window];
     double temperature = 0;
     double a = 1;

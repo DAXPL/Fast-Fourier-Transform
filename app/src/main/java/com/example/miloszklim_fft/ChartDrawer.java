@@ -56,34 +56,35 @@ public class ChartDrawer {
         Slider Fslider = main.findViewById(R.id.SliderF);
 
         // Ustawienie listenerów dla elementów interfejsu
-        buttonStart.setOnClickListener(new View.OnClickListener() {
+        buttonStart.setOnClickListener(new View.OnClickListener()
+        {
             public void onClick(View v) {
                 handleStartButtonClick(buttonStart);
             }
         });
 
-        FSslider.addOnChangeListener(new Slider.OnChangeListener() {
+        FSslider.addOnChangeListener(new Slider.OnChangeListener()
+        {
             @Override
-            public void onValueChange(Slider slider, float value, boolean fromUser) {
+            public void onValueChange(Slider slider, float value, boolean fromUser)
+            {
                 main.samplingFrequency = (int) value;
                 fsText.setText("samplingFrequency: " + main.samplingFrequency);
             }
         });
 
-        Fslider.addOnChangeListener(new Slider.OnChangeListener() {
+        Fslider.addOnChangeListener(new Slider.OnChangeListener()
+        {
             @Override
-            public void onValueChange(Slider slider, float value, boolean fromUser) {
+            public void onValueChange(Slider slider, float value, boolean fromUser)
+            {
                 main.f = (int) value;
                 fText.setText("F: " + main.f);
             }
         });
     }
 
-    /**
-     * Obsługa kliknięcia przycisku start.
-     *
-     * @param buttonStart Przycisk start.
-     */
+    //Obsługa kliknięcia przycisku start/stop.
     private void handleStartButtonClick(Button buttonStart) {
         if (!main.isRunning) {
             try {
@@ -110,9 +111,7 @@ public class ChartDrawer {
         main.isRunning = !main.isRunning;
     }
 
-    /**
-     * Rysowanie wykresu na płótnie.
-     */
+    // Rysowanie wykresu.
     public void DrawChart() {
         canvas.drawColor(Color.BLACK);
         if (!main.isRunning) return;

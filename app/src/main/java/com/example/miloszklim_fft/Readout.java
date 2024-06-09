@@ -10,68 +10,75 @@ import androidx.core.app.ActivityCompat;
 
 public class Readout extends Thread {
 
-    // Konfiguracja kanału audio i format
+    // Konfiguracja kanału audio
     int channelConfiguration = AudioFormat.CHANNEL_IN_MONO;
     int audioEncoding = AudioFormat.ENCODING_PCM_16BIT;
 
-    // Rozmiar bloku i częstotliwość próbkowania
-    int blocksize = 2048;
-    int samplingFrequency = 6000; // FS
-
     // Wskaźniki do głównych komponentów
-    android.app.Activity activity;
+
     double[] x;
     double[] y;
     double[] ampl;
+    android.app.Activity activity;
     FFT myFFT;
-
-    boolean shouldRun = true;
-
     MainActivity main;
 
-    public Readout(MainActivity _main) {
+    //Flaga wyznaczająca czas życia wątku
+    boolean shouldRun = true;
+
+    //Konstruktor klasy
+    public Readout(MainActivity _main)
+    {
         main = _main;
-        blocksize = _main.blocksize;
-        samplingFrequency = _main.samplingFrequency;
+
         activity = _main;
         x = _main.x;
         y = _main.y;
         ampl = _main.ampl;
 
-        myFFT = new FFT(blocksize);
+        myFFT = new FFT(_main.blocksize);
     }
 
     @Override
-    public void run() {
-        Log.d("Readout", "Readout thread " + Thread.currentThread().getId() + " is running");
-        for (int i = 0; i < blocksize; i++) {
+    public void run()
+    {
+        Log.d("Readout", "Watek" + Thread.currentThread().getId() + " uruchomiony");
+        for (int i = 0; i < main.blocksize; i++) {
             y[i] = 0;
         }
-        short[] audioBuffer = new short[blocksize];
 
-        int bufferSize = AudioRecord.getMinBufferSize(samplingFrequency, channelConfiguration, audioEncoding);
+        short[] audioBuffer = new short[main.blocksize];
+        int bufferSize = AudioRecord.getMinBufferSize(main.samplingFrequency,
+                                                        channelConfiguration,
+                                                        audioEncoding);
 
         // Sprawdzanie uprawnień do nagrywania audio
-        if (ActivityCompat.checkSelfPermission(activity, android.Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(activity, new String[]{android.Manifest.permission.RECORD_AUDIO}, 0);
+        if (ActivityCompat.checkSelfPermission(activity, android.Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED)
+        {
+            ActivityCompat.requestPermissions(activity,
+                                            new String[]{android.Manifest.permission.RECORD_AUDIO},
+                                            0);
             return;
         }
 
-        AudioRecord audioRecord = new AudioRecord(MediaRecorder.AudioSource.MIC, samplingFrequency, channelConfiguration, audioEncoding, bufferSize);
+        AudioRecord audioRecord = new AudioRecord(MediaRecorder.AudioSource.MIC,
+                                                    main.samplingFrequency,
+                                                    channelConfiguration,
+                                                    audioEncoding,
+                                                    bufferSize);
         audioRecord.startRecording();
 
         while (shouldRun) {
             // Odczytywanie danych audio
-            int bufferReadResult = audioRecord.read(audioBuffer, 0, blocksize);
-            Log.d("Audio", audioRecord.getActiveRecordingConfiguration().toString());
+            int bufferReadResult = audioRecord.read(audioBuffer, 0, main.blocksize);
 
-            for (int i = 0; i < blocksize && i < bufferReadResult; i++) {
+            for (int i = 0; i < main.blocksize && i < bufferReadResult; i++) {
                 x[i] = (double) audioBuffer[i] / 32768.0; // konwersja 16-bitowych danych na double
             }
 
             // Obliczenia
-            ComputeAmpl();
-            main.temperature = ((ComputeAVG() * main.a) + main.b);
+            int newReading = ComputeFFT();
+            main.temperature = (main.a * ComputeAVG(newReading)) + main.b;//y = ax + b
 
             // Uśpienie wątku
             try {
@@ -85,46 +92,61 @@ public class Readout extends Thread {
         audioRecord.stop();
     }
 
-    /**
-     * Obliczanie amplitudy sygnału.
-     */
-    private void ComputeAmpl() {
+    //Obliczanie amplitudy sygnału
+    //Zwraca miejsce w którym osiągnięto "spike"
+    private int ComputeFFT() {
         myFFT.fft(x, y);
 
-        main.ymax = 0;
+        int ymax = 0;
         double maxValue = Double.MIN_VALUE;
 
-        for (int i = 0; i < blocksize / 2; i++) {
+        for (int i = 0; i < main.blocksize / 2; i++)
+        {
             ampl[i] = x[i] * x[i] + y[i] * y[i];
 
             if (ampl[i] > maxValue) {
                 maxValue = ampl[i];
-                main.ymax = i;
+                ymax = i;
             }
         }
-        Log.d("temp", main.ymax + " " + maxValue);
 
-        for (int i = 0; i < blocksize / 2; i++) {
+        for (int i = 0; i < main.blocksize / 2; i++)
+        {
             ampl[i] = (ampl[i] * 500) / maxValue;
         }
+
+        return ymax;
     }
 
-    /**
-     * Obliczanie średniej amplitudy z odczytów.
-     *
-     * @return Średnia amplituda.
-     */
-    private double ComputeAVG() {
-        for (int i = 0; i < main.readings.length - 1; i++) {
+    // Obliczanie średniej amplitudy z odczytów.
+    private double ComputeAVG(int newReading)
+    {
+        //Przesuwanie pomiarów - średnia pełzająca
+        for (int i = 0; i < main.readings.length - 1; i++)
+        {
             main.readings[i] = main.readings[i + 1];
         }
-        main.readings[main.readings.length - 1] = main.ymax;
+        main.readings[main.readings.length - 1] = newReading;
 
+        //Wyznaczanie średniej
         double avg = 0;
-        for (int i = 0; i < main.readings.length; i++) {
+        for (int i = 0; i < main.readings.length; i++)
+        {
             avg += main.readings[i];
         }
 
+        //Wypisywanie zawartości tabeli pomiarów
+        LogAvgTable();
+
         return (avg / main.readings.length);
+    }
+
+    //Debbuging
+    private void LogAvgTable(){
+        String s = "";
+        for (int i = 0; i < main.readings.length; i++) {
+            s += main.readings[i] + " | ";
+        }
+        Log.d("AVG",s);
     }
 }
