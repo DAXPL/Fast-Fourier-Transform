@@ -61,7 +61,7 @@ public class Readout extends Thread {
             return;
         }
 
-        AudioRecord audioRecord = new AudioRecord(MediaRecorder.AudioSource.MIC,
+        AudioRecord audioRecord = new AudioRecord(MediaRecorder.AudioSource.DEFAULT,
                                                     main.samplingFrequency,
                                                     channelConfiguration,
                                                     audioEncoding,
@@ -82,7 +82,7 @@ public class Readout extends Thread {
 
             // Uśpienie wątku
             try {
-                Thread.sleep(200); // 5 razy na sekundę
+                Thread.sleep(10); // 5 razy na sekundę
             } catch (Exception e) {
                 e.printStackTrace();
                 break;

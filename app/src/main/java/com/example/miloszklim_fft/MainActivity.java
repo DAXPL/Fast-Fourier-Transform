@@ -14,7 +14,7 @@ import android.media.MediaRecorder;
 public class MainActivity extends AppCompatActivity {
 
     // Częstotliwość próbkowania (Hz)
-    int samplingFrequency = 6000;
+    int samplingFrequency = 12000;
     // Częstotliwość sygnału (Hz)
     int f = 2800;
     // Rozmiar bloku
@@ -24,10 +24,9 @@ public class MainActivity extends AppCompatActivity {
     double[] x;
     double[] y;
     double[] ampl;
-    //double ymax = 0;
 
     // Parametry związane z odczytem temperatury
-    int window = 25;
+    int window = 100;
     double[] readings = new double[window];
     double temperature = 0;
     double a = 1;
