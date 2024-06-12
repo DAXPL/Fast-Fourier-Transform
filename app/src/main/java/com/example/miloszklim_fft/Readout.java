@@ -42,7 +42,6 @@ public class Readout extends Thread {
     @Override
     public void run()
     {
-        Log.d("Readout", "Watek" + Thread.currentThread().getId() + " uruchomiony");
         for (int i = 0; i < main.blocksize; i++) {
             y[i] = 0;
         }
@@ -82,7 +81,7 @@ public class Readout extends Thread {
 
             // Uśpienie wątku
             try {
-                Thread.sleep(10); // 5 razy na sekundę
+                Thread.sleep(200); // 5 razy na sekundę
             } catch (Exception e) {
                 e.printStackTrace();
                 break;
@@ -135,18 +134,6 @@ public class Readout extends Thread {
             avg += main.readings[i];
         }
 
-        //Wypisywanie zawartości tabeli pomiarów
-        LogAvgTable();
-
         return (avg / main.readings.length);
-    }
-
-    //Debbuging
-    private void LogAvgTable(){
-        String s = "";
-        for (int i = 0; i < main.readings.length; i++) {
-            s += main.readings[i] + " | ";
-        }
-        Log.d("AVG",s);
     }
 }

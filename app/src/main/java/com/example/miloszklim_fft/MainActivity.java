@@ -1,15 +1,20 @@
 package com.example.miloszklim_fft;
 
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.os.Handler;
-import androidx.appcompat.app.AppCompatActivity;
-import com.google.android.material.slider.RangeSlider;
-import com.google.android.material.slider.Slider;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.view.View;
+import android.widget.Button;
 
-// Importy związane z nagrywaniem dźwięku
-import android.media.AudioFormat;
-import android.media.AudioRecord;
-import android.media.MediaRecorder;
+import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -26,48 +31,117 @@ public class MainActivity extends AppCompatActivity {
     double[] ampl;
 
     // Parametry związane z odczytem temperatury
-    int window = 100;
+    int window = 50;
     double[] readings = new double[window];
     double temperature = 0;
     double a = 1;
     double b = 0;
-    public Readout readoutProcess;
 
-    // Obiekt do rysowania wykresu
-    ChartDrawer drawer;
     // Flaga oznaczająca stan działania programu
     boolean isRunning = false;
+
+
+    // Elementy interfejsu użytkownika
+    ImageView iv;
+    Bitmap bitmap;
+    Canvas canvas;
+    Paint paint;
+    TextView tempOutputFinal;
+    TextView chartMin;
+    TextView chartMax;
+
+    //Wielowątkowość
+    MainActivity mainThread;
+    Readout readoutProcess;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Znajdź elementy interfejsu w układzie
+        tempOutputFinal = findViewById(R.id.tempOutputFinal);
+        chartMin = findViewById(R.id.chartMin);
+        chartMax = findViewById(R.id.chartMax);
+
+        iv = findViewById(R.id.wykres);
+        bitmap = Bitmap.createBitmap(blocksize / 2, 520, Bitmap.Config.ARGB_8888);
+        canvas = new Canvas(bitmap);
+        paint = new Paint();
+        iv.setImageBitmap(bitmap);
+        canvas.drawColor(Color.RED);
+
+        Button buttonStart = findViewById(R.id.ButtonStart);
+
+        mainThread = this;
+
+        // Ustawienie listenerów dla elementów interfejsu
+        buttonStart.setOnClickListener(new View.OnClickListener()
+        {
+            public void onClick(View v)
+            {
+                if (!isRunning) {
+                    buttonStart.setText("Stop");
+
+                    readoutProcess = new Readout(mainThread);
+                    readoutProcess.start();
+                } else {
+                    readoutProcess.shouldRun = false;
+                    canvas.drawColor(Color.BLACK);
+                    buttonStart.setText("Start");
+                }
+
+                isRunning = !isRunning;
+
+            }
+        });
+
         // Inicjalizacja tablic
         x = new double[blocksize];
         y = new double[blocksize];
         ampl = new double[blocksize / 2];
 
-        // Inicjalizacja obiektu rysującego wykres
-        drawer = new ChartDrawer(this);
 
         // Rysowanie wykresu
         DrawChart();
     }
 
-    /**
-     * Metoda rysująca wykres.
-     */
-    public void DrawChart() {
-        drawer.DrawChart();
+    // Metoda rysująca wykres.
+    public void DrawChart()
+    {
+        canvas.drawColor(Color.BLACK);
+
+        // Rysowanie danych amplitudy na zielono
+        paint.setColor(Color.GREEN);
+        for (int i = 0; i < ampl.length; i++) {
+            int downy = 510;
+            int upy = 510 - (int) ampl[i];
+
+            canvas.drawLine(i, downy, i, upy, paint);
+        }
+
+        // Rysowanie linii siatki na czerwono
+        paint.setColor(Color.RED);
+        for (int i = 0; i < ampl.length; i++) {
+            if (i % 10 == 0) {
+                canvas.drawLine(i, 510, i, 500, paint);
+            }
+            if (i % 100 == 0) {
+                canvas.drawLine(i, 510, i, 475, paint);
+            }
+        }
+
+        // Aktualizacja etykiet wykresu
+        chartMin.setText("0");
+        chartMax.setText(String.valueOf(ampl.length));
+
+        // Aktualizacja wyświetlania temperatury
+        tempOutputFinal.setText(String.format("%.2f", temperature) + " C");
         Refresh(500); // Odświeżanie wykresu co 500 ms
     }
 
-    /**
-     * Metoda odświeżająca wykres po określonym czasie.
-     *
-     * @param millis czas w milisekundach
-     */
+    // Metoda odświeżająca wykres po określonym czasie.
     public void Refresh(int millis) {
         final Handler handler = new Handler();
         final Runnable runnable = new Runnable() {
